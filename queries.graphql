@@ -1,0 +1,252 @@
+# Sample GraphQL Queries for Rootstock Subsquid Indexer
+
+# Get recent blocks
+query RecentBlocks {
+  blocks(orderBy: number_DESC, limit: 10) {
+    id
+    number
+    hash
+    timestamp
+    gasUsed
+    gasLimit
+    transactionCount
+  }
+}
+
+# Get block by number
+query BlockByNumber {
+  blocks(where: {number_eq: 6000000}) {
+    id
+    number
+    hash
+    timestamp
+    parentHash
+    gasUsed
+    gasLimit
+    baseFeePerGas
+    transactionCount
+    transactions {
+      hash
+      from
+      to
+      value
+      gasUsed
+      status
+    }
+  }
+}
+
+# Get recent transactions
+query RecentTransactions {
+  transactions(orderBy: timestamp_DESC, limit: 10) {
+    id
+    hash
+    from
+    to
+    value
+    gasUsed
+    gasPrice
+    status
+    block {
+      number
+      timestamp
+    }
+  }
+}
+
+# Get transactions from specific address
+query TransactionsFromAddress {
+  transactions(
+    where: {from_eq: "0x1234567890123456789012345678901234567890"}
+    orderBy: timestamp_DESC
+    limit: 10
+  ) {
+    hash
+    to
+    value
+    gasUsed
+    status
+    timestamp
+    block {
+      number
+    }
+  }
+}
+
+# Get ERC-20 transfers
+query RecentTransfers {
+  transfers(orderBy: timestamp_DESC, limit: 10) {
+    id
+    from
+    to
+    value
+    logIndex
+    timestamp
+    token {
+      address
+      symbol
+      name
+      decimals
+    }
+    transaction {
+      hash
+    }
+    block {
+      number
+      timestamp
+    }
+  }
+}
+
+# Get transfers for specific token
+query TokenTransfers {
+  transfers(
+    where: {token: {address_eq: "0x..."}}
+    orderBy: timestamp_DESC
+    limit: 20
+  ) {
+    from
+    to
+    value
+    timestamp
+    transaction {
+      hash
+    }
+    block {
+      number
+    }
+  }
+}
+
+# Get all tokens
+query AllTokens {
+  tokens(orderBy: address_ASC, limit: 50) {
+    address
+    symbol
+    name
+    decimals
+    totalSupply
+  }
+}
+
+# Get token details with transfers
+query TokenDetails {
+  tokens(where: {address_eq: "0x..."}) {
+    address
+    symbol
+    name
+    decimals
+    totalSupply
+    transfers(orderBy: timestamp_DESC, limit: 10) {
+      from
+      to
+      value
+      timestamp
+      transaction {
+        hash
+      }
+    }
+  }
+}
+
+# Get accounts
+query RecentAccounts {
+  accounts(orderBy: firstSeenTimestamp_DESC, limit: 10) {
+    address
+    firstSeenBlock
+    firstSeenTimestamp
+  }
+}
+
+# Get account details
+query AccountDetails {
+  accounts(where: {address_eq: "0x..."}) {
+    address
+    firstSeenBlock
+    firstSeenTimestamp
+  }
+}
+
+# Complex query: Get block with all its transactions and transfers
+query CompleteBlockData {
+  blocks(where: {number_eq: 6000000}) {
+    id
+    number
+    hash
+    timestamp
+    gasUsed
+    gasLimit
+    transactions {
+      hash
+      from
+      to
+      value
+      gasUsed
+      status
+      transfers {
+        from
+        to
+        value
+        token {
+          address
+          symbol
+        }
+      }
+    }
+  }
+}
+
+# Statistics queries
+query TransactionStats {
+  transactions(limit: 1) {
+    id
+  }
+  blocks(limit: 1) {
+    id
+  }
+  transfers(limit: 1) {
+    id
+  }
+  tokens(limit: 1) {
+    id
+  }
+}
+
+# Search tokens by symbol or name
+query SearchTokens {
+  tokens(
+    where: {
+      OR: [
+        {symbol_containsInsensitive: "RIF"}
+        {name_containsInsensitive: "RIF"}
+      ]
+    }
+    limit: 10
+  ) {
+    address
+    symbol
+    name
+    decimals
+  }
+}
+
+# Get high-value transfers
+query HighValueTransfers {
+  transfers(
+    where: {value_gte: "1000000000000000000"}  # 1 ETH equivalent
+    orderBy: value_DESC
+    limit: 10
+  ) {
+    from
+    to
+    value
+    timestamp
+    token {
+      symbol
+      decimals
+    }
+    transaction {
+      hash
+    }
+  }
+}

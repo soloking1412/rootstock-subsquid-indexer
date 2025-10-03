@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build output
+lib/
+dist/
+
+# Environment variables
+.env
+.env.local
+
+# Database
+db/migrations/*.js
+*.db
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Subsquid
+.subsquid/
+assets/
+
+# TypeScript
+*.tsbuildinfo
+
+# Claude IDE
+.claude/
+
+# Test results (optional)
+*TEST_RESULTS.md
+
+# Lock files (optional - uncomment if you want to exclude)
+# package-lock.json

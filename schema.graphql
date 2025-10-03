@@ -1,0 +1,58 @@
+type Block @entity {
+  id: ID!
+  number: Int! @index
+  hash: String! @index
+  timestamp: DateTime! @index
+  parentHash: String!
+  gasUsed: BigInt!
+  gasLimit: BigInt!
+  baseFeePerGas: BigInt
+  transactionCount: Int!
+  transactions: [Transaction!]! @derivedFrom(field: "block")
+}
+
+type Transaction @entity {
+  id: ID!
+  hash: String! @unique @index
+  block: Block!
+  blockNumber: Int! @index
+  timestamp: DateTime! @index
+  from: String! @index
+  to: String @index
+  value: BigInt!
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  status: Int!
+  input: String
+  contractAddress: String
+  transfers: [Transfer!]! @derivedFrom(field: "transaction")
+}
+
+type Transfer @entity {
+  id: ID!
+  transaction: Transaction!
+  block: Block!
+  timestamp: DateTime! @index
+  token: Token!
+  from: String! @index
+  to: String! @index
+  value: BigInt!
+  logIndex: Int!
+}
+
+type Token @entity {
+  id: ID!
+  address: String! @unique @index
+  symbol: String
+  name: String
+  decimals: Int
+  totalSupply: BigInt
+  transfers: [Transfer!]! @derivedFrom(field: "token")
+}
+
+type Account @entity {
+  id: ID!
+  address: String! @unique @index
+  firstSeenBlock: Int!
+  firstSeenTimestamp: DateTime!
+}
