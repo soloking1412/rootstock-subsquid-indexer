@@ -35,6 +35,12 @@ cp .env.example .env
 # Install dependencies
 npm install
 
+# Generate TypeORM models from GraphQL schema
+npm run codegen
+
+# Build the TypeScript project
+npm run build
+
 # Start database (Docker)
 npm run up
 
@@ -49,8 +55,10 @@ npm run processor:start
 npm run query:start
 
 # Visit GraphQL Playground
-open http://localhost:4350/graphql
+open http://localhost:4351/graphql
 ```
+
+> **⚠️ Important**: If you get a "Failed to resolve model" error when running `db:generate`, make sure you've run both `npm run codegen` and `npm run build` first. See the [Troubleshooting](#troubleshooting) section for more details.
 
 ## Configuration
 
@@ -77,10 +85,10 @@ ROOTSTOCK_RPC=https://public-node.rsk.co
 START_BLOCK=6000000
 
 # GraphQL Server
-GQL_PORT=4350
+GQL_PORT=4351
 
 # Processor
-PROCESSOR_PROMETHEUS_PORT=3000
+PROCESSOR_PROMETHEUS_PORT=3001
 ```
 
 ### Network Configuration
@@ -241,13 +249,17 @@ docker-compose.yml           # Database setup
 ### Available Scripts
 
 ```bash
+# Code Generation & Build
+npm run codegen              # Generate TypeORM models from GraphQL schema
+npm run build                # Build TypeScript to JavaScript
+
 # Database operations
-npm run db:create            # Create database
-npm run db:drop              # Drop database
-npm run db:migrate           # Run migrations
+npm run db:generate          # Generate migrations (requires DB running)
+npm run db:migrate           # Apply migrations
+npm run db:create            # Create new migration
+npm run db:drop              # Revert last migration
 
 # Development
-npm run build                # Build TypeScript
 npm run processor:start      # Start processor
 npm run query:start          # Start GraphQL server
 
@@ -262,10 +274,12 @@ npm run clean                # Clean build artifacts
 ### Adding New Entities
 
 1. Update `schema.graphql` with new entity definition
-2. Create TypeORM entity in `src/model/generated/`
-3. Update `src/model/index.ts` to export the new entity
-4. Add processing logic in `src/main.ts`
-5. Create GraphQL resolver in `src/server-extension/resolvers/`
+2. Run `npm run codegen` to generate TypeORM entities
+3. Run `npm run build` to compile TypeScript
+4. Generate migration with `npm run db:generate`
+5. Apply migration with `npm run db:migrate`
+6. Add processing logic in `src/main.ts`
+7. Update GraphQL resolvers if needed
 
 ### Custom RPC Endpoints
 
@@ -329,22 +343,34 @@ The processor includes built-in logging that reports:
 
 ### Common Issues
 
-1. **Database Connection Failed**:
-   - Ensure PostgreSQL is running
-   - Check database credentials in `.env`
-   - Verify database exists
+1. **"Failed to resolve model" Error**:
+   - Run `npm run codegen` to generate TypeORM models
+   - Run `npm run build` to compile TypeScript
+   - Ensure `lib/` directory exists before running migrations
+   - This is the most common setup issue!
 
-2. **RPC Connection Issues**:
+2. **Database Connection Failed**:
+   - Ensure Docker is running
+   - Start PostgreSQL with `npm run up`
+   - Check database credentials in `.env`
+   - Verify database is accessible on port 5432
+
+3. **"No changes in database schema" When Generating Migration**:
+   - This means migrations are already up-to-date
+   - Check `db/migrations/` for existing migrations
+   - Run `npm run db:migrate` to apply existing migrations
+
+4. **RPC Connection Issues**:
    - Check `ROOTSTOCK_RPC` endpoint availability
    - Verify network connectivity
    - Consider using alternative RPC endpoints
 
-3. **GraphQL Server Won't Start**:
-   - Ensure database is migrated
-   - Check port availability (default: 4350)
+5. **GraphQL Server Won't Start**:
+   - Ensure database is migrated (`npm run db:migrate`)
+   - Check port availability (default: 4351)
    - Verify TypeORM entities are properly generated
 
-4. **Processor Performance**:
+6. **Processor Performance**:
    - Adjust `START_BLOCK` to start from a more recent block
    - Reduce batch size if memory issues occur
    - Monitor RPC rate limits
