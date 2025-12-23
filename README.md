@@ -79,7 +79,7 @@ DB_SSL=false
 NETWORK=mainnet
 
 # Rootstock RPC Endpoint
-ROOTSTOCK_RPC=https://public-node.rsk.co
+ROOTSTOCK_RPC=https://rpc.rootstock.io
 
 # Start block for indexing
 START_BLOCK=6000000
@@ -93,8 +93,8 @@ PROCESSOR_PROMETHEUS_PORT=3001
 
 ### Network Configuration
 
-- **Mainnet**: Uses `https://public-node.rsk.co`
-- **Testnet**: Uses `https://public-node.testnet.rsk.co`
+- **Mainnet**: Uses `https://rpc.rootstock.io`
+- **Testnet**: Uses `https://rpc.testnet.rootstock.io`
 
 Switch networks by changing the `NETWORK` environment variable.
 
@@ -338,6 +338,18 @@ The processor includes built-in logging that reports:
 - ERC-20 transfers found
 - New tokens discovered
 - Processing performance metrics
+
+## Security
+
+This project maintains zero npm audit vulnerabilities:
+- Regular dependency updates
+- No known security issues in production dependencies
+- Minimal dependency footprint for better security posture
+
+To verify security status:
+```bash
+npm audit
+```
 
 ## Troubleshooting
 
