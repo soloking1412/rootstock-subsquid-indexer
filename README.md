@@ -20,8 +20,12 @@ A production-ready Subsquid indexer for Rootstock blockchain that indexes blocks
 - Node.js 18+
 - Docker & Docker Compose
 - Git
+- **Rootstock RPC API Key** - Get yours free at [https://rpc.rootstock.io/](https://rpc.rootstock.io/)
 
 ### Installation
+
+> **📌 Important**: Before starting, sign up at [https://rpc.rootstock.io/](https://rpc.rootstock.io/) to get your free RPC API key. You'll need this to connect to the Rootstock network.
+
 Users can get started with:
 
 ```bash
@@ -31,6 +35,9 @@ cd rootstock-subsquid-indexer
 
 # Copy environment template
 cp .env.example .env
+
+# Get your Rootstock RPC API key from https://rpc.rootstock.io/
+# Then update ROOTSTOCK_RPC in .env with your API key
 
 # Install dependencies
 npm install
@@ -79,7 +86,8 @@ DB_SSL=false
 NETWORK=mainnet
 
 # Rootstock RPC Endpoint
-ROOTSTOCK_RPC=https://rpc.rootstock.io
+# Get your API key from: https://rpc.rootstock.io/
+ROOTSTOCK_RPC=https://rpc.rootstock.io/<YOUR_API_KEY>
 
 # Start block for indexing
 START_BLOCK=6000000
@@ -91,12 +99,22 @@ GQL_PORT=4351
 PROCESSOR_PROMETHEUS_PORT=3001
 ```
 
-### Network Configuration
+### Rootstock RPC Configuration
 
-- **Mainnet**: Uses `https://rpc.rootstock.io`
-- **Testnet**: Uses `https://rpc.testnet.rootstock.io`
+To use this indexer, you need to get your own RPC API key:
 
-Switch networks by changing the `NETWORK` environment variable.
+1. **Visit [https://rpc.rootstock.io/](https://rpc.rootstock.io/)** to sign up and get your API key
+2. **Update your `.env` file** with your API key:
+   ```bash
+   ROOTSTOCK_RPC=https://rpc.rootstock.io/<YOUR_API_KEY>
+   ```
+3. **For testnet**, use the testnet endpoint with your API key
+
+**Why use the official RPC API?**
+- Better reliability and uptime
+- Higher rate limits
+- Official Rootstock support
+- Free tier available for development
 
 ## GraphQL API
 
@@ -281,13 +299,15 @@ npm run clean                # Clean build artifacts
 6. Add processing logic in `src/main.ts`
 7. Update GraphQL resolvers if needed
 
-### Custom RPC Endpoints
+### Alternative RPC Endpoints
 
-To use a custom RPC endpoint, update the `ROOTSTOCK_RPC` environment variable:
+While we recommend using the official [rpc.rootstock.io](https://rpc.rootstock.io/) service, you can use alternative endpoints if needed:
 
 ```bash
-ROOTSTOCK_RPC=https://your-custom-rpc-endpoint.com
+ROOTSTOCK_RPC=https://your-alternative-rpc-endpoint.com
 ```
+
+Note: Alternative endpoints may have different rate limits and reliability.
 
 ## Production Deployment
 
@@ -305,8 +325,8 @@ DB_HOST=your-production-db-host
 DB_USER=your-production-db-user
 DB_PASS=your-production-db-password
 
-# Use production RPC endpoint
-ROOTSTOCK_RPC=https://your-production-rpc-endpoint.com
+# Use your Rootstock RPC API key from https://rpc.rootstock.io/
+ROOTSTOCK_RPC=https://rpc.rootstock.io/<YOUR_API_KEY>
 ```
 
 3. **Run migrations**:
@@ -373,9 +393,10 @@ npm audit
    - Run `npm run db:migrate` to apply existing migrations
 
 4. **RPC Connection Issues**:
-   - Check `ROOTSTOCK_RPC` endpoint availability
+   - Verify you have a valid API key from [https://rpc.rootstock.io/](https://rpc.rootstock.io/)
+   - Check that your `ROOTSTOCK_RPC` is correctly formatted: `https://rpc.rootstock.io/<YOUR_API_KEY>`
+   - Ensure your API key has sufficient rate limits for your indexing needs
    - Verify network connectivity
-   - Consider using alternative RPC endpoints
 
 5. **GraphQL Server Won't Start**:
    - Ensure database is migrated (`npm run db:migrate`)
